@@ -53,4 +53,14 @@ for i in "${user_list_var[@]}"; do
 done
 ```
 
-Access the container using: <http://URL:8989>
+## Accessing RStudio Server
+
+Access the container using: <http://\<URL\>:8989>
+
+## Removing container
+
+For stopping and removing container
+
+```bash
+docker stop scrnaseq-env && docker rm scrnaseq-env;
+```
