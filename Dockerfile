@@ -37,21 +37,24 @@ RUN DEBIAN_FRONTEND=noninteractive apt update -y -qq \
     build-essential \
     ca-certificates;
 
+ARG R_VERSION=4.4.1
+ARG RIG_VERSION=0.7.0
+
 RUN mkdir -p /opt/install_apps/rig \
   && mkdir -p /opt/install_apps/rstudio \
-  && curl -f -s -S -L --create-dirs --insecure --silent -o /opt/install_apps/rig/rig.tar.gz -C - https://github.com/r-lib/rig/releases/download/v0.7.0/rig-linux-0.7.0.tar.gz \
+  && curl -f -s -S -L --create-dirs --insecure --silent -o /opt/install_apps/rig/rig.tar.gz -C - https://github.com/r-lib/rig/releases/download/v${RIG_VERSION}/rig-linux-${RIG_VERSION}.tar.gz \
   && tar -C /opt/install_apps/rig/ -xzf /opt/install_apps/rig/rig.tar.gz \
   && ln -sf /opt/install_apps/rig/bin/rig /usr/local/bin/rig \
-  && rig install 4.4.0;
+  && rig install "${R_VERSION}";
 
 # RUN R -q -e 'install.packages(c("tidyverse", "BiocManager", "Seurat"), repos="https://packagemanager.posit.co/cran/__linux__/noble/latest")';
 
-RUN R -q -e 'pak::pkg_install(pkg = c( \
-  "tidyverse", "BiocManager", "pak", "reticulate", \
-  "styler", "lintr", "rstudioapi", "quarto", "rmarkdown", "knitr", \
-  "bioc::DESeq2", "bioc::SingleCellExperiment", \
-  "Seurat@4.4.0", "SeuratObject@4.1.4" \
-  ),lib = "/opt/R/4.4.0/lib/R/library")';
+RUN R -q -e "pak::pkg_install(pkg = c( \
+  'tidyverse', 'BiocManager', 'pak', 'reticulate', \
+  'styler', 'lintr', 'rstudioapi', 'quarto', 'rmarkdown', 'knitr', \
+  'bioc::DESeq2', 'bioc::SingleCellExperiment', \
+  'Seurat@4.4.0', 'SeuratObject@4.1.4' \
+  ),lib = '/opt/R/${R_VERSION}/lib/R/library')";
 
 
 RUN curl -f -s -S -L --create-dirs --insecure --silent -o /opt/install_apps/rstudio/rstudio-server.deb -C - https://rstudio.org/download/latest/stable/server/jammy/rstudio-server-latest-amd64.deb \
