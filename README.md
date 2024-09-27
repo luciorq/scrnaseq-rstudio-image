@@ -43,7 +43,7 @@ function create_user_in_container () {
   \docker exec "${container_name}" useradd -m -s /bin/bash -d "/home/${user_name}" -p "${user_pw_hash}" --user-group "${user_name}";
 }
 
-
+# NOTE: Dependes on `gopass` and `mkpasswd` on the host machine
 for i in "${user_list_var[@]}"; do
   user_name="${i}";
   user_pw_str="$(\gopass pwgen --one-per-line --ambiguous 24 | head -1)";
