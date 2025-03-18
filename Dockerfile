@@ -35,9 +35,11 @@ RUN DEBIAN_FRONTEND=noninteractive apt update -y -qq \
     python3-pip \
     python3-dev \
     build-essential \
-    ca-certificates;
+    ca-certificates \
+  && DEBIAN_FRONTEND=noninteractive apt clean -y -qq \
+  && rm -rf /var/lib/apt/lists/*;
 
-ARG R_VERSION=4.4.1
+ARG R_VERSION=4.4.3
 ARG RIG_VERSION=0.7.0
 
 RUN mkdir -p /opt/install_apps/rig \
@@ -54,13 +56,16 @@ RUN R -q -e "pak::pkg_install(pkg = c( \
   'styler', 'lintr', 'rstudioapi', 'quarto', 'rmarkdown', 'knitr', \
   'bioc::DESeq2', 'bioc::SingleCellExperiment', \
   'Seurat@4.4.0', 'SeuratObject@4.1.4' \
-  ),lib = '/opt/R/${R_VERSION}/lib/R/library')";
-
+  ),lib = '/opt/R/${R_VERSION}/lib/R/library')" \
+  && DEBIAN_FRONTEND=noninteractive apt clean -y -qq \
+  && rm -rf /var/lib/apt/lists/*;
 
 RUN curl -f -s -S -L --create-dirs --insecure --silent -o /opt/install_apps/rstudio/rstudio-server.deb -C - https://rstudio.org/download/latest/stable/server/jammy/rstudio-server-latest-amd64.deb \
   && gdebi -n /opt/install_apps/rstudio/rstudio-server.deb \
   && rm /opt/install_apps/rstudio/rstudio-server.deb \
   && rm /opt/install_apps/rig/rig.tar.gz \
+  && DEBIAN_FRONTEND=noninteractive apt clean -y -qq \
+  && rm -rf /var/lib/apt/lists/* \
   && (echo 'www-port=8989' >> /etc/rstudio/rserver.conf);
 
 EXPOSE 8989
